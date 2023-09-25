@@ -1,32 +1,12 @@
-import { useState } from 'react';
 import Square from './Square';
 
-const Board = () => {
-  const [squares, setsquares] = useState(Array(9).fill(null));
-  const [isXNext, setisXNext ] = useState(false);
-
-
-  console.log(squares)
-
-  const handlesquareclick = clickedposition => {
-    if(squares[clickedposition]){
-    return;
-    }
-    setsquares(currentsquares =>{
-      return currentsquares.map((squarevalue, position)=>{
-        if(clickedposition === position){
-        return isXNext? "x" : "O";
-        }
-      return squarevalue;
-      })
-    })
-    setisXNext((currentisXNext) => !currentisXNext)
-  };
-
-  const rendersquare = position => {
+  // Board is a functional component
+const Board = ({squares,handlesquareclick}) => {
+  const rendersquare = position => {      // rendersquare is used to render/design the game board
     return (
-      <Square value={squares[position]} onClick={()=> handlesquareclick(position)} />
-    );
+      <Square value={squares[position]} 
+      onClick={()=> handlesquareclick(position)} />
+      );
   };
 
   return (
@@ -48,5 +28,7 @@ const Board = () => {
       </div>
     </div>
   );
+  
 };
+
 export default Board;
