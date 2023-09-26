@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Board from './components/Board';
 import './style.scss';
+import StatusMessage from './components/StatusMessage';
 import { calculateWinner } from './winner';
 
 function App() {
@@ -9,8 +10,7 @@ function App() {
   // const [state variable, state function]  --> syntax for creating a usestate hook
 
   const winner = calculateWinner(squares)
-  const nextplayer = isXNext?"X" : "0"
-  const statusMessage = winner? `winner is ${winner}`: `nextplayer is ${nextplayer}`
+  
 
   // console.log(winner)
 
@@ -30,7 +30,8 @@ function App() {
   };
   return (
     <div className="app">
-      <h2>{statusMessage}</h2>
+      <StatusMessage winner={winner} isXNext={isXNext} squares={squares}/>
+      
       <Board squares={squares} 
       handlesquareclick={handlesquareclick}/>
 
