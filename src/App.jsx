@@ -2,43 +2,64 @@ import { useState } from 'react';
 import Board from './components/Board';
 import './style.scss';
 import StatusMessage from './components/StatusMessage';
+import History from './components/History';
 import { calculateWinner } from './winner';
 
+const NEW_GAME = [{ squares: Array(9).fill(null), isXNext: true },]
+
 function App() {
-  const [squares, setsquares] = useState(Array(9).fill(null));
-  const [isXNext, setisXNext ] = useState(true);
-  // const [state variable, state function]  --> syntax for creating a usestate hook
+  const [history, sethistory] = useState(NEW_GAME);
+  const [currentmove, setcurrentmove] = useState(0);
 
-  const winner = calculateWinner(squares)
-  
+  const gamingBoard = history[currentmove];
 
-  // console.log(winner)
+  const winner = calculateWinner(gamingBoard.squares);
 
-   const handlesquareclick = clickedposition => {
-    if(squares[clickedposition] || winner){       // this block checks whether the square is already clicked or not
-    return;
+
+
+  const handlesquareclick = clickedposition => {
+    if (gamingBoard.squares[clickedposition] || winner) {
+      // this block checks whether the square is already clicked or not
+      return;
     }
-    setsquares(currentsquares =>{
-      return currentsquares.map((squarevalue, position)=>{
-        if(clickedposition === position){     // set squares function is used to assign x or 0 in the 
-        return isXNext? "X" : "0";
+    sethistory(currenthistory => {
+      const IsTraversing = currentmove + 1 !==currenthistory.length
+
+      const lastgamingstate = IsTraversing ? currenthistory[currentmove] : history[history.length -1];
+
+      const nextsquarestate = lastgamingstate.squares.map(
+        (squarevalue, position) => {
+          if (clickedposition === position) {
+            return lastgamingstate.isXNext ? 'X' : '0';
+          }
+          return squarevalue;
         }
-      return squarevalue;
-      })
-    })
-    setisXNext((currentisXNext) => !currentisXNext)     // this is used to toggle the boolean value or used to change the player uniformly
+      );
+
+      const base = IsTraversing? currenthistory.slice(0, currenthistory.indexOf(lastgamingstate) + 1) : currenthistory;
+
+
+      return base.concat({
+        squares: nextsquarestate,
+        isXNext: !lastgamingstate.isXNext,
+      });
+    });
+    setcurrentmove(move => move + 1);
   };
+  const moveto = move => {
+    setcurrentmove(move);
+  };
+
   return (
     <div className="app">
-      <StatusMessage winner={winner} isXNext={isXNext} squares={squares}/>
-      
-      <Board squares={squares} 
-      handlesquareclick={handlesquareclick}/>
+      <StatusMessage winner={winner} gamingBoard={gamingBoard} />
 
-        {/* <button onClick={onbtnclick}>click here to increment</button> */}
-        {/* <div>{counter}</div> */}
-
-  
+      <Board
+        squares={gamingBoard.squares}
+        handlesquareclick={handlesquareclick}
+      />
+      <h4><u>Current Game History</u></h4>
+      <History history={history} moveto={moveto} currentmove={currentmove} />
     </div>
   );
 }
