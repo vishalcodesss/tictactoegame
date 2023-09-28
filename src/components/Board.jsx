@@ -1,11 +1,15 @@
 import Square from './Square';
 
   // Board is a functional component
-const Board = ({squares,handlesquareclick}) => {
-  const rendersquare = position => {      // rendersquare is used to render/design the game board
+const Board = ({squares,handlesquareclick,winningsquares}) => {
+  const rendersquare = position => {
+    const iswinningsquare = winningsquares.includes(position)
+
     return (
       <Square value={squares[position]} 
-      onClick={()=> handlesquareclick(position)} />
+      onClick={()=> handlesquareclick(position)}
+      iswinningsquare ={iswinningsquare}
+      />
       );
   };
 
